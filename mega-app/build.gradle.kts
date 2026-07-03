@@ -41,7 +41,7 @@ dependencies {
 }
 
 rootProject.subprojects.forEach { proj ->
-    if (proj.path.startsWith(":src:")) {
+    if (proj.path.startsWith(":src:") && proj.path.count { it == ':' } == 3) {
         dependencies.add("implementation", proj)
     }
 }
@@ -65,7 +65,7 @@ val generateMegaFactory = tasks.register("generateMegaFactory") {
         code.appendLine("        val sources = mutableListOf<Source>()")
         
         rootProject.subprojects.forEach { proj ->
-            if (proj.path.startsWith(":src:")) {
+            if (proj.path.startsWith(":src:") && proj.path.count { it == ':' } == 3) {
                 val gradleFile = proj.file("build.gradle.kts")
                 if (gradleFile.exists()) {
                     val content = gradleFile.readText()
