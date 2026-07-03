@@ -46,9 +46,20 @@ rootProject.subprojects.forEach { proj ->
     }
 }
 
+val extensionProjects = rootProject.subprojects.filter { proj ->
+    proj.path.startsWith(":src:") && proj.path.count { it == ':' } == 3
+}.map { proj ->
+    val lang = proj.parent?.name ?: "en"
+    val ext = proj.name
+    val gradleFile = proj.file("build.gradle.kts")
+    Triple(lang, ext, gradleFile)
+}
+
 val generateMegaFactory = tasks.register("generateMegaFactory") {
     val outDir = layout.buildDirectory.dir("generated/source/mega").get().asFile
     outputs.dir(outDir)
+    
+    val extProjects = extensionProjects
     
     doLast {
         val factoryFile = File(outDir, "eu/kanade/tachiyomi/megaextension/MegaExtensionFactory.kt")
@@ -64,37 +75,31 @@ val generateMegaFactory = tasks.register("generateMegaFactory") {
         code.appendLine("    override fun createSources(): List<Source> {")
         code.appendLine("        val sources = mutableListOf<Source>()")
         
-        rootProject.subprojects.forEach { proj ->
-            if (proj.path.startsWith(":src:") && proj.path.count { it == ':' } == 3) {
-                val gradleFile = proj.file("build.gradle.kts")
-                if (gradleFile.exists()) {
-                    val content = gradleFile.readText()
-                    val lang = proj.parent?.name ?: "en"
-                    val ext = proj.name
-                    
-                    var classname = ""
-                    val classMatch = Regex("className\\s*=\\s*\"([^\"]+)\"").find(content)
-                    if (classMatch != null) {
-                        classname = classMatch.groupValues[1]
-                    }
-                    
-                    val fqn = if (classname.isNotEmpty()) {
-                        "eu.kanade.tachiyomi.extension.\$lang.\$ext.\$classname"
-                    } else {
-                        "eu.kanade.tachiyomi.extension.\$lang.\$ext.ExtensionGenerated"
-                    }
-                    
-                    code.appendLine("        try {")
-                    code.appendLine("            val instance = Class.forName(\"\$fqn\").getDeclaredConstructor().newInstance()")
-                    code.appendLine("            if (instance is SourceFactory) {")
-                    code.appendLine("                sources.addAll(instance.createSources())")
-                    code.appendLine("            } else if (instance is Source) {")
-                    code.appendLine("                sources.add(instance)")
-                    code.appendLine("            }")
-                    code.appendLine("        } catch (e: Exception) {")
-                    code.appendLine("            // Ignore")
-                    code.appendLine("        }")
+        for ((lang, ext, gradleFile) in extProjects) {
+            if (gradleFile.exists()) {
+                val content = gradleFile.readText()
+                var classname = ""
+                val classMatch = Regex("className\\s*=\\s*\"([^\"]+)\"").find(content)
+                if (classMatch != null) {
+                    classname = classMatch.groupValues[1]
                 }
+                
+                val fqn = if (classname.isNotEmpty()) {
+                    "eu.kanade.tachiyomi.extension.\$lang.\$ext.\$classname"
+                } else {
+                    "eu.kanade.tachiyomi.extension.\$lang.\$ext.ExtensionGenerated"
+                }
+                
+                code.appendLine("        try {")
+                code.appendLine("            val instance = Class.forName(\"\$fqn\").getDeclaredConstructor().newInstance()")
+                code.appendLine("            if (instance is SourceFactory) {")
+                code.appendLine("                sources.addAll(instance.createSources())")
+                code.appendLine("            } else if (instance is Source) {")
+                code.appendLine("                sources.add(instance)")
+                code.appendLine("            }")
+                code.appendLine("        } catch (e: Exception) {")
+                code.appendLine("            // Ignore")
+                code.appendLine("        }")
             }
         }
         
