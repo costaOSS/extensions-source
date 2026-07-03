@@ -1,5 +1,5 @@
-import com.android.build.api.dsl.ApplicationExtension
-import com.android.build.api.variant.ApplicationAndroidComponentsExtension
+import com.android.build.api.dsl.LibraryExtension
+import com.android.build.api.variant.LibraryAndroidComponentsExtension
 import com.android.build.gradle.tasks.PackageAndroidArtifact
 import com.google.devtools.ksp.gradle.KspExtension
 import keiyoushi.gradle.extensions.BaseUrlSpec
@@ -47,10 +47,6 @@ class PluginExtension : Plugin<Project> {
         android {
             namespace = "eu.kanade.tachiyomi.extension"
 
-            defaultConfig {
-                this.applicationIdSuffix = applicationIdSuffix
-            }
-
             sourceSets {
                 named("main") {
                     manifest.srcFile(rootProject.file("common/AndroidManifest.xml"))
@@ -69,31 +65,13 @@ class PluginExtension : Plugin<Project> {
                 checkReleaseBuilds = false
             }
 
-            signingConfigs {
-                create("release") {
-                    storeFile = rootProject.file("signingkey.jks")
-                    storePassword = providers.environmentVariable("KEY_STORE_PASSWORD").orNull
-                    keyAlias = providers.environmentVariable("ALIAS").orNull
-                    keyPassword = providers.environmentVariable("KEY_PASSWORD").orNull
-                }
-            }
-
             buildTypes {
                 named("release") {
-                    signingConfig = if (rootProject.file("signingkey.jks").exists()) {
-                        signingConfigs.getByName("release")
-                    } else {
-                        signingConfigs.getByName("debug")
-                    }
                     isMinifyEnabled = true
                     proguardFiles(rootProject.file("common/proguard-rules.pro"))
                     @Suppress("UnstableApiUsage")
                     vcsInfo.include = false
                 }
-            }
-
-            dependenciesInfo {
-                includeInApk = false
             }
 
             buildFeatures {
@@ -180,10 +158,7 @@ class PluginExtension : Plugin<Project> {
                 variant.sources.manifests.addStaticManifestFile("AndroidManifest.xml")
                 variant.sources.manifests.addGeneratedManifestFile(manifestTask) { it.outputFile }
 
-                variant.outputs.forEach { output ->
-                    output.versionCode.set(versionCodeProvider)
-                    output.versionName.set(versionNameProvider)
-                }
+
             }
         }
 
@@ -280,11 +255,11 @@ private fun specsToFilters(specs: List<DeeplinkSpec>, defaultHosts: List<String>
     }
 }
 
-private fun Project.android(block: ApplicationExtension.() -> Unit) {
+private fun Project.android(block: LibraryExtension.() -> Unit) {
     extensions.configure(block)
 }
 
-private fun Project.androidComponents(block: ApplicationAndroidComponentsExtension.() -> Unit) {
+private fun Project.androidComponents(block: LibraryAndroidComponentsExtension.() -> Unit) {
     extensions.configure(block)
 }
 
