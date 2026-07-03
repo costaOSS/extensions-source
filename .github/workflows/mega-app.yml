@@ -31,8 +31,13 @@ jobs:
           java-version: 17
           distribution: temurin
 
+      - name: Setup Gradle Cache
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          cache-read-only: ${{ github.ref != 'refs/heads/main' }}
+
       - name: Build Mega App APK
-        run: ./gradlew :mega-app:assemble${BUILD_TYPE} --no-daemon
+        run: ./gradlew :mega-app:assemble${BUILD_TYPE} --no-daemon --parallel --build-cache --max-workers=4 -Porg.gradle.parallel=true
 
       - name: Get lowercased build type
         id: string
