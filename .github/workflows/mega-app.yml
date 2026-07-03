@@ -1,0 +1,30 @@
+name: Build Mega Extension App
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 0 */3 * *' # Every 3 days
+
+jobs:
+  build:
+    name: Build Mega App
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: 17
+          distribution: temurin
+
+      - name: Build Mega App APK
+        run: ./gradlew :mega-app:assembleRelease --no-daemon
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: MegaExtensionApp
+          path: mega-app/build/outputs/apk/release/*.apk
