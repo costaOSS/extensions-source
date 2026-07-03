@@ -2,6 +2,15 @@ name: Build Mega Extension App
 
 on:
   workflow_dispatch:
+    inputs:
+      build_type:
+        description: 'Build Type'
+        required: true
+        default: 'Release'
+        type: choice
+        options:
+          - Release
+          - Debug
   schedule:
     - cron: '0 0 */3 * *' # Every 3 days
 
@@ -9,6 +18,8 @@ jobs:
   build:
     name: Build Mega App
     runs-on: ubuntu-latest
+    env:
+      BUILD_TYPE: ${{ github.event.inputs.build_type || 'Release' }}
 
     steps:
       - name: Checkout repo
@@ -21,10 +32,14 @@ jobs:
           distribution: temurin
 
       - name: Build Mega App APK
-        run: ./gradlew :mega-app:assembleRelease --no-daemon
+        run: ./gradlew :mega-app:assemble${BUILD_TYPE} --no-daemon
+
+      - name: Get lowercased build type
+        id: string
+        run: echo "BUILD_TYPE_LOWER=$(echo $BUILD_TYPE | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: MegaExtensionApp
-          path: mega-app/build/outputs/apk/release/*.apk
+          name: MegaExtensionApp-${{ env.BUILD_TYPE }}
+          path: mega-app/build/outputs/apk/${{ env.BUILD_TYPE_LOWER }}/*.apk
