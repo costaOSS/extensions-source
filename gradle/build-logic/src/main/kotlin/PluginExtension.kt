@@ -33,7 +33,7 @@ import org.gradle.kotlin.dsl.withType
 class PluginExtension : Plugin<Project> {
     override fun apply(target: Project): Unit = with(target) {
         plugins {
-            alias(libs.plugins.android.application)
+            alias(libs.plugins.android.library)
             alias(libs.plugins.kotlin.serialization)
             alias(libs.plugins.ksp)
 
