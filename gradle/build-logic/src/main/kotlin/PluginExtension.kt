@@ -149,7 +149,7 @@ class PluginExtension : Plugin<Project> {
                 val keepRules = variant.sources.keepRules
                 if (keepRules != null) {
                     val task = tasks.register<GenerateKeepRulesTask>("generate${variantName}KeepRules") {
-                        this.applicationId.set(variant.applicationId)
+                        this.applicationId.set("eu.kanade.tachiyomi.extension.$applicationIdSuffix")
                         this.className.set(classNameProvider)
                     }
                     keepRules.addGeneratedSourceDirectory(task) { it.outputDir }
