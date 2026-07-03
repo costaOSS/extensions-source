@@ -46,12 +46,12 @@ rootProject.subprojects.forEach { proj ->
     }
 }
 
-val generateMegaFactory by tasks.registering {
+val generateMegaFactory = tasks.register("generateMegaFactory") {
     val outDir = layout.buildDirectory.dir("generated/source/mega").get().asFile
     outputs.dir(outDir)
     
     doLast {
-        val factoryFile = java.io.File(outDir, "eu/kanade/tachiyomi/megaextension/MegaExtensionFactory.kt")
+        val factoryFile = File(outDir, "eu/kanade/tachiyomi/megaextension/MegaExtensionFactory.kt")
         factoryFile.parentFile.mkdirs()
         
         val code = StringBuilder()
@@ -106,7 +106,9 @@ val generateMegaFactory by tasks.registering {
     }
 }
 
-android.sourceSets.getByName("main").java.srcDir(layout.buildDirectory.dir("generated/source/mega"))
+android.sourceSets.named("main") {
+    java.directories.add(layout.buildDirectory.dir("generated/source/mega").get().asFile.absolutePath)
+}
 
 tasks.whenTaskAdded {
     if (name.startsWith("compileDebugKotlin") || name.startsWith("compileReleaseKotlin")) {
