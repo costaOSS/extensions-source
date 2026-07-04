@@ -1,0 +1,21 @@
+# Extensions excluded from MegaApp build
+# These extensions have external JitPack dependencies or build-time code generation
+# that cannot be resolved in the flat single-module mega build.
+
+# wolfdotcom: generates DomainNumber.kt at build time via custom Gradle task (network fetch)
+src/ko/wolfdotcom
+
+# baozimanhua: requires JitPack dep com.github.stevenyomi:baozibanner
+src/zh/baozimanhua
+
+# manhastro: requires OkHttp brotli interceptor not in core deps
+src/pt/manhastro
+
+# lesporoiniens: kotlinx.serialization issue (incompatible serializer() call)
+src/fr/lesporoiniens
+
+# ciaoplus: Bitmap.Config? type mismatch (nullable vs non-null)
+src/ja/ciaoplus
+
+# vizshonenjump: requires com.drewnoakes:metadata-extractor JitPack dep
+src/en/vizshonenjump
