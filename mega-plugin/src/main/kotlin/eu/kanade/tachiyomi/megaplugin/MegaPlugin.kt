@@ -8,12 +8,14 @@ class MegaPlugin : Plugin<Project> {
     override fun apply(project: Project) {
         val extension = project.extensions.create("megaApp", MegaAppExtension::class.java)
 
+        val rootDir = project.rootDir
+        
         project.tasks.register("generateMegaApp") {
             group = "mega-app"
             description = "Scans repository and automatically generates SourceRegistry, SourceSets, etc."
 
             doLast {
-                val scanner = RepositoryScanner(project.rootDir)
+                val scanner = RepositoryScanner(rootDir)
                 val repo = scanner.scan()
                 println("MegaPlugin: Found ${repo.extensions.size} extensions, ${repo.multisrcThemes.size} multisrc themes, and ${repo.libs.size} libraries.")
                 
