@@ -36,12 +36,15 @@ class SourceRegistryGenerator {
                         val generatedClass = "ExtensionGenerated_${lang.replace(Regex("[^A-Za-z0-9]"), "_")}_${name.replace(Regex("[^A-Za-z0-9]"), "")}"
                         
                         val file = File(megaAppSrcDir, "$generatedClass.kt")
+                        // Skip baseUrl override if it contains Groovy template variables like $it or $sub
+                        val safeBaseUrl = if (baseUrl.contains("\$")) "" else baseUrl
+                        val baseUrlLine = if (safeBaseUrl.isNotEmpty()) "    override val baseUrl = \"$safeBaseUrl\"" else ""
                         file.writeText("""
                             package eu.kanade.tachiyomi.mega.generated
                             
                             class $generatedClass : $className() {
                                 override val name = "$name"
-                                override val baseUrl = "$baseUrl"
+                                $baseUrlLine
                                 override val lang = "$lang"
                                 override val id = ${id}L
                             }
@@ -75,12 +78,15 @@ class SourceRegistryGenerator {
                         
                         if (isAbstract) {
                             val file = File(megaAppSrcDir, "$generatedClass.kt")
+                            // Skip baseUrl override if it contains Groovy template variables like $it or $sub
+                            val safeBaseUrl = if (baseUrl.contains("\$")) "" else baseUrl
+                            val baseUrlLine = if (safeBaseUrl.isNotEmpty()) "    override val baseUrl = \"$safeBaseUrl\"" else ""
                             file.writeText("""
                                 package eu.kanade.tachiyomi.mega.generated
                                 
                                 class $generatedClass : $pkg.$clsName() {
                                     override val name = "$name"
-                                    override val baseUrl = "$baseUrl"
+                                    $baseUrlLine
                                     override val lang = "$lang"
                                     override val id = ${id}L
                                 }

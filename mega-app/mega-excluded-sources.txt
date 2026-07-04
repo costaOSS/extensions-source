@@ -8,14 +8,35 @@ src/ko/wolfdotcom
 # baozimanhua: requires JitPack dep com.github.stevenyomi:baozibanner
 src/zh/baozimanhua
 
-# manhastro: requires OkHttp brotli interceptor not in core deps
+# manhastro: requires OkHttp brotli interceptor
 src/pt/manhastro
 
-# lesporoiniens: kotlinx.serialization issue (incompatible serializer() call)
+# lesporoiniens: kotlinx.serialization incompatibility
 src/fr/lesporoiniens
 
-# ciaoplus: Bitmap.Config? type mismatch (nullable vs non-null)
+# ciaoplus: Bitmap.Config? nullable type mismatch
 src/ja/ciaoplus
 
 # vizshonenjump: requires com.drewnoakes:metadata-extractor JitPack dep
 src/en/vizshonenjump
+
+# comicklive: requires OkHttp brotli interceptor
+src/all/comicklive
+
+# kagane: requires OkHttp brotli interceptor
+src/all/kagane
+
+# manhuarm: requires OkHttp brotli interceptor
+src/all/manhuarm
+
+# komga: requires org.apache.commons:commons-text (StringSubstitutor)
+src/all/komga
+
+# mango: requires info.debatty:java-string-similarity (Levenshtein, JaroWinkler)
+src/all/mango
+
+# e621: uses BuildConfig (per-extension build-time generated class)
+src/all/e621
+
+# mangadex: uses BuildConfig (per-extension build-time generated class)
+src/all/mangadex
