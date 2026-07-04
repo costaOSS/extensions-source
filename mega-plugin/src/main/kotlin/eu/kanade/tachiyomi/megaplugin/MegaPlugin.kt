@@ -2,11 +2,10 @@ package eu.kanade.tachiyomi.megaplugin
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.Task
 
 class MegaPlugin : Plugin<Project> {
     override fun apply(project: Project) {
-        val extension = project.extensions.create("megaApp", MegaAppExtension::class.java)
+        project.extensions.create("megaApp", MegaAppExtension::class.java)
 
         val rootDir = project.rootDir
         
@@ -29,10 +28,10 @@ class MegaPlugin : Plugin<Project> {
                 }
                 
                 val sourceSetGenerator = SourceSetGenerator()
-                sourceSetGenerator.generate(project, repo, resolvedDeps)
+                sourceSetGenerator.generate(rootDir, repo, resolvedDeps)
                 
                 val registryGenerator = SourceRegistryGenerator()
-                registryGenerator.generate(project, repo)
+                registryGenerator.generate(rootDir, repo)
             }
         }
     }

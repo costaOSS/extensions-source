@@ -1,23 +1,22 @@
 package eu.kanade.tachiyomi.megaplugin
 
-import org.gradle.api.Project
 import java.io.File
 
 class SourceSetGenerator {
 
-    fun generate(project: Project, repo: ScannedRepository, resolvedDeps: ResolvedDependencies) {
+    fun generate(rootDir: File, repo: ScannedRepository, resolvedDeps: ResolvedDependencies) {
         val srcDirs = mutableListOf<File>()
         val resDirs = mutableListOf<File>()
         val assetsDirs = mutableListOf<File>()
 
-        val genAssetsDir = File(project.rootDir, "mega-app/build/generated/mega-assets")
+        val genAssetsDir = File(rootDir, "mega-app/build/generated/mega-assets")
         if (genAssetsDir.exists()) {
             genAssetsDir.deleteRecursively()
         }
         genAssetsDir.mkdirs()
 
         fun getNamespace(dir: File): String? {
-            val relativePath = dir.relativeTo(project.rootDir).path.replace('\\', '/')
+            val relativePath = dir.relativeTo(rootDir).path.replace('\\', '/')
             if (relativePath.startsWith("src/")) {
                 val parts = relativePath.split("/")
                 if (parts.size >= 3) {
@@ -57,7 +56,7 @@ class SourceSetGenerator {
         }
 
         // Load exclusion list
-        val excludedFile = File(project.rootDir, "mega-app/mega-excluded-sources.txt")
+        val excludedFile = File(rootDir, "mega-app/mega-excluded-sources.txt")
         val excludedPatterns = if (excludedFile.exists()) {
             excludedFile.readLines()
                 .map { it.trim() }
@@ -65,7 +64,7 @@ class SourceSetGenerator {
         } else emptyList()
 
         fun isExcluded(dir: File): Boolean {
-            val path = dir.relativeTo(project.rootDir).path.replace('\\', '/')
+            val path = dir.relativeTo(rootDir).path.replace('\\', '/')
             return excludedPatterns.any { pattern -> path.contains(pattern) }
         }
 
@@ -78,13 +77,13 @@ class SourceSetGenerator {
         // Add required libraries sources
         resolvedDeps.libs.forEach { addSourceSet(it) }
 
-        val listFile = File(project.rootDir, "mega-app/mega-sources-list.txt")
-        val gradleFile = File(project.rootDir, "mega-app/mega-sources.gradle")
+        val listFile = File(rootDir, "mega-app/mega-sources-list.txt")
+        val gradleFile = File(rootDir, "mega-app/mega-sources.gradle")
         
         // Write the list file
         val listBuilder = StringBuilder()
         listBuilder.appendLine("# java")
-        srcDirs.forEach { listBuilder.appendLine(it.relativeTo(File(project.rootDir, "mega-app")).path.replace('\\', '/')) }
+        srcDirs.forEach { listBuilder.appendLine(it.relativeTo(File(rootDir, "mega-app")).path.replace('\\', '/')) }
         listFile.writeText(listBuilder.toString())
         
         // Write the static groovy file that dynamically parses the list
@@ -116,6 +115,6 @@ class SourceSetGenerator {
         """.trimIndent()
         
         gradleFile.writeText(gradleContent)
-        project.logger.lifecycle("MegaPlugin: Generated ${srcDirs.size} source dirs and namespaced ${assetsDirs.size} asset dirs under ${genAssetsDir.path}")
+        println("MegaPlugin: Generated ${srcDirs.size} source dirs and namespaced ${assetsDirs.size} asset dirs under ${genAssetsDir.path}")
     }
 }
