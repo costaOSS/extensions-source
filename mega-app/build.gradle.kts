@@ -53,6 +53,17 @@ dependencies {
     implementation(project(":core"))
     implementation(libs.bundles.common)
     implementation(libs.kotlin.json)
+
+    // Required by lib/randomua, lib-multisrc/kemono, lib-multisrc/natsuid
+    implementation("com.squareup.okhttp3:okhttp-brotli:5.3.2")
+    // Required by lib-multisrc/mangahub
+    implementation("org.brotli:dec:0.1.2")
+    // Required by lib/e4p
+    implementation("org.kotlincrypto.hash:blake2:0.8.0") {
+        exclude(group = "org.jetbrains.kotlin", module = "kotlin-stdlib")
+    }
+    // Required by lib/zipinterceptor
+    implementation("com.github.tachiyomiorg:image-decoder:e08e9be535")
 }
 
 // Apply dynamic source sets
