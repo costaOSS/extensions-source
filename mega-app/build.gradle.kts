@@ -13,7 +13,7 @@ android {
         minSdk = 21
         targetSdk = 36
         versionCode = 1
-        versionName = "1.0"
+        versionName = "1.4.1"
     }
 
     signingConfigs {
@@ -51,7 +51,7 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach 
 
 dependencies {
     implementation(project(":core"))
-    implementation(libs.bundles.common)
+    compileOnly(libs.bundles.common)
     implementation(libs.kotlin.json)
 
     // Required by lib/randomua, lib-multisrc/kemono, lib-multisrc/natsuid
