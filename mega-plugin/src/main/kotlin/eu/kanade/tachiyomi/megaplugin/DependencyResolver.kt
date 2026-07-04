@@ -1,8 +1,5 @@
 package eu.kanade.tachiyomi.megaplugin
 
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtImportDirective
-import org.jetbrains.kotlin.psi.KtTreeVisitorVoid
 import java.io.File
 
 class DependencyResolver(private val metadataCollector: MetadataCollector) {
@@ -22,20 +19,15 @@ class DependencyResolver(private val metadataCollector: MetadataCollector) {
         }
 
         fun scanFileForImports(file: File) {
-            val ktFile = metadataCollector.createKtFile(file)
-            ktFile.accept(object : KtTreeVisitorVoid() {
-                override fun visitImportDirective(importDirective: KtImportDirective) {
-                    super.visitImportDirective(importDirective)
-                    val importPath = importDirective.importPath?.pathStr ?: return
-                    
-                    // Check if it matches any library
-                    for ((pkg, libDir) in libMap) {
-                        if (importPath.startsWith(pkg)) {
-                            requiredLibs.add(libDir)
-                        }
+            val imports = metadataCollector.parseImports(file)
+            for (importPath in imports) {
+                // Check if it matches any library
+                for ((pkg, libDir) in libMap) {
+                    if (importPath.startsWith(pkg)) {
+                        requiredLibs.add(libDir)
                     }
                 }
-            })
+            }
         }
 
         // Scan extensions

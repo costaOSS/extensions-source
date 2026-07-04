@@ -8,8 +8,7 @@ repositories {
 }
 
 dependencies {
-    // For proper Kotlin analysis without Regex
-    implementation("org.jetbrains.kotlin:kotlin-compiler-embeddable:1.9.23")
+    // We are using a custom lexer instead of embeddable compiler to avoid NoClassDefFoundError for OpenAPI classes
     implementation("com.squareup:kotlinpoet:1.16.0")
 }
 
