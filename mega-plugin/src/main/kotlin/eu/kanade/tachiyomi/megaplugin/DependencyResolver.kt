@@ -13,8 +13,8 @@ class DependencyResolver(private val metadataCollector: MetadataCollector) {
         for (libDir in repo.libs) {
             val libName = libDir.name
             // We can guess the package by scanning its own files or assuming keiyoushi.lib.$libName
-            libMap["keiyoushi.lib.\$libName"] = libDir
-            libMap["eu.kanade.tachiyomi.lib.\$libName"] = libDir
+            libMap["keiyoushi.lib.$libName"] = libDir
+            libMap["eu.kanade.tachiyomi.lib.$libName"] = libDir
             libMap["eu.kanade.tachiyomi.network.interceptor"] = libDir // Some interceptors might use this
         }
 

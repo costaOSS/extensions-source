@@ -18,7 +18,7 @@ class MetadataCollector {
                 hasSourceAnnotation = true
             } else if (token == "class" && hasSourceAnnotation && i + 1 < tokens.size) {
                 return if (currentPackage.isNotEmpty()) {
-                    "\$currentPackage.\${tokens[i + 1]}"
+                    "$currentPackage.${tokens[i + 1]}"
                 } else {
                     tokens[i + 1]
                 }

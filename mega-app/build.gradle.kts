@@ -41,11 +41,7 @@ dependencies {
     implementation(project(":core"))
 }
 
-rootProject.subprojects.forEach { proj ->
-    if (proj.path.startsWith(":src:") && proj.path.count { it == ':' } == 3) {
-        dependencies.add("implementation", proj)
-    }
-}
+// Dependencies and SourceSets are automatically managed by eu.kanade.tachiyomi.mega-plugin
 
 val extensionProjects = rootProject.subprojects.filter { proj ->
     proj.path.startsWith(":src:") && proj.path.count { it == ':' } == 3
