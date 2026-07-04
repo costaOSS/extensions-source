@@ -6,6 +6,12 @@ plugins {
     `java-gradle-plugin`
 }
 
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(17))
+    }
+}
+
 // Configuration should be synced with [/gradle/build-logic/src/main/kotlin/PluginSpotless.kt]
 val ktlintVersion = libs.ktlint.bom.get().version
 val editorConfigFile = rootProject.file("../../.editorconfig")
