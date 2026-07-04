@@ -34,7 +34,7 @@ rootProject.name = "Keiyoushi"
 /**
  * Add or remove modules to load as needed for local development here.
  */
-loadAllIndividualExtensions()
+// loadAllIndividualExtensions() // Disabled for MegaApp
 // loadIndividualExtension("all", "mangadex")
 
 /**
@@ -45,20 +45,16 @@ include(":compiler")
 include(":mega-app")
 
 // Load all modules under /lib
-File(rootDir, "lib").eachDir { include("lib:${it.name}") }
+// File(rootDir, "lib").eachDir { include("lib:${it.name}") } // Disabled for MegaApp
 
 // Load all modules under /lib-multisrc
-File(rootDir, "lib-multisrc").eachDir { include("lib-multisrc:${it.name}") }
+// File(rootDir, "lib-multisrc").eachDir { include("lib-multisrc:${it.name}") } // Disabled for MegaApp
 
 /**
  * ======================================== HELPER FUNCTION ========================================
  */
 fun loadAllIndividualExtensions() {
-    File(rootDir, "src").eachDir { dir ->
-        dir.eachDir { subdir ->
-            include("src:${dir.name}:${subdir.name}")
-        }
-    }
+    // Disabled
 }
 fun loadIndividualExtension(lang: String, name: String) {
     include("src:$lang:$name")
