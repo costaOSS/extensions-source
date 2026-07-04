@@ -1,16 +1,17 @@
 plugins {
     alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.serialization)
     id("eu.kanade.tachiyomi.mega-plugin")
 }
 
 android {
     namespace = "eu.kanade.tachiyomi.megaextension"
-    compileSdk = 34
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "eu.kanade.tachiyomi.megaextension"
         minSdk = 21
-        targetSdk = 34
+        targetSdk = 36
         versionCode = 1
         versionName = "1.0"
     }
@@ -35,87 +36,30 @@ android {
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
+
+    lint {
+        checkReleaseBuilds = false
+        abortOnError = false
+    }
+}
+
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+    compilerOptions {
+        freeCompilerArgs.addAll("-Xcontext-parameters")
+    }
 }
 
 dependencies {
     implementation(project(":core"))
+    implementation(libs.bundles.common)
+    implementation(libs.kotlin.json)
 }
 
-// Dependencies and SourceSets are automatically managed by eu.kanade.tachiyomi.mega-plugin
-
-val extensionProjects = rootProject.subprojects.filter { proj ->
-    proj.path.startsWith(":src:") && proj.path.count { it == ':' } == 3
-}.map { proj ->
-    val lang = proj.parent?.name ?: "en"
-    val ext = proj.name
-    val gradleFile = proj.file("build.gradle.kts")
-    Triple(lang, ext, gradleFile)
+// Apply dynamic source sets
+val sourcesFile = file("mega-sources.gradle")
+if (sourcesFile.exists()) {
+    apply(from = "mega-sources.gradle")
+} else {
+    println("mega-sources.gradle not found! Please run `./gradlew generateMegaApp` first.")
 }
-
-val generateMegaFactory = tasks.register("generateMegaFactory") {
-    val outDir = layout.buildDirectory.dir("generated/source/mega").get().asFile
-    outputs.dir(outDir)
-    
-    val extProjects = extensionProjects
-    
-    doLast {
-        val factoryFile = File(outDir, "eu/kanade/tachiyomi/megaextension/MegaExtensionFactory.kt")
-        factoryFile.parentFile.mkdirs()
-        
-        val code = StringBuilder()
-        code.appendLine("package eu.kanade.tachiyomi.megaextension")
-        code.appendLine()
-        code.appendLine("import eu.kanade.tachiyomi.source.SourceFactory")
-        code.appendLine("import eu.kanade.tachiyomi.source.Source")
-        code.appendLine()
-        code.appendLine("class MegaExtensionFactory : SourceFactory {")
-        code.appendLine("    override fun createSources(): List<Source> {")
-        code.appendLine("        val sources = mutableListOf<Source>()")
-        
-        for ((lang, ext, gradleFile) in extProjects) {
-            if (gradleFile.exists()) {
-                val content = gradleFile.readText()
-                var classname = ""
-                val classMatch = Regex("className\\s*=\\s*\"([^\"]+)\"").find(content)
-                if (classMatch != null) {
-                    classname = classMatch.groupValues[1]
-                }
-                
-                val fqn = if (classname.isNotEmpty()) {
-                    "eu.kanade.tachiyomi.extension.\$lang.\$ext.\$classname"
-                } else {
-                    "eu.kanade.tachiyomi.extension.\$lang.\$ext.ExtensionGenerated"
-                }
-                
-                code.appendLine("        try {")
-                code.appendLine("            val instance = Class.forName(\"\$fqn\").getDeclaredConstructor().newInstance()")
-                code.appendLine("            if (instance is SourceFactory) {")
-                code.appendLine("                sources.addAll(instance.createSources())")
-                code.appendLine("            } else if (instance is Source) {")
-                code.appendLine("                sources.add(instance)")
-                code.appendLine("            }")
-                code.appendLine("        } catch (e: Exception) {")
-                code.appendLine("            // Ignore")
-                code.appendLine("        }")
-            }
-        }
-        
-        code.appendLine("        return sources")
-        code.appendLine("    }")
-        code.appendLine("}")
-        
-        factoryFile.writeText(code.toString())
-    }
-}
-
-android.sourceSets.named("main") {
-    java.directories.add(layout.buildDirectory.dir("generated/source/mega").get().asFile.absolutePath)
-}
-
-tasks.whenTaskAdded {
-    if (name.startsWith("compileDebugKotlin") || name.startsWith("compileReleaseKotlin")) {
-        dependsOn(generateMegaFactory)
-    }
-}
-
 

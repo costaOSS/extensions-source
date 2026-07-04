@@ -6,7 +6,7 @@
         android:icon="@mipmap/ic_launcher"
         android:label="Tachiyomi Mega Extension">
         <meta-data android:name="tachiyomix.name" android:value="Mega Extension" />
-        <meta-data android:name="tachiyomi.extension.class" android:value=".MegaExtensionFactory" />
+        <meta-data android:name="tachiyomi.extension.class" android:value="eu.kanade.tachiyomi.mega.generated.SourceRegistry" />
         <meta-data android:name="tachiyomi.extension.nsfw" android:value="1" />
         <meta-data android:name="tachiyomix.contentWarning" android:value="1" />
         <meta-data android:name="tachiyomix.extensionLib" android:value="1.4" />
