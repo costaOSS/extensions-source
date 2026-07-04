@@ -1,6 +1,7 @@
 @file:Suppress("ktlint:standard:kdoc")
 
 pluginManagement {
+    includeBuild("mega-plugin")
     includeBuild("gradle/build-logic")
     repositories {
         google()

@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.android.application)
+    id("eu.kanade.tachiyomi.mega-plugin")
 }
 
 android {
