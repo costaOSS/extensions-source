@@ -37,11 +37,11 @@ jobs:
           cache-read-only: ${{ github.ref != 'refs/heads/main' }}
 
       - name: Build Mega App APK
-        run: ./gradlew :mega-app:assemble${BUILD_TYPE} --no-daemon --parallel --build-cache --max-workers=4 -Porg.gradle.parallel=true
+        run: ./gradlew :mega-app:assemble${{ env.BUILD_TYPE }} --no-daemon --parallel --build-cache --max-workers=4
 
       - name: Get lowercased build type
         id: string
-        run: echo "BUILD_TYPE_LOWER=$(echo $BUILD_TYPE | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+        run: echo "BUILD_TYPE_LOWER=$(echo ${{ env.BUILD_TYPE }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
