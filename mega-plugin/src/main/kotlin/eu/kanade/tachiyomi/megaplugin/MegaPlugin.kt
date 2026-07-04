@@ -19,7 +19,14 @@ class MegaPlugin : Plugin<Project> {
                 val repo = scanner.scan()
                 println("MegaPlugin: Found ${repo.extensions.size} extensions, ${repo.multisrcThemes.size} multisrc themes, and ${repo.libs.size} libraries.")
                 
-                // Future phases will be called here
+                val metadataCollector = MetadataCollector()
+                val dependencyResolver = DependencyResolver(metadataCollector)
+                val resolvedDeps = dependencyResolver.resolve(repo)
+                
+                println("MegaPlugin: Resolved ${resolvedDeps.libs.size} required shared libraries.")
+                resolvedDeps.libs.forEach { lib ->
+                    println("  - Required library: ${lib.name}")
+                }
             }
         }
     }
