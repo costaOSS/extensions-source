@@ -10,26 +10,29 @@ class MegaPlugin : Plugin<Project> {
 
         val rootDir = project.rootDir
         
-        // Phase 1 & 2 & 3: Run fast scanning during configuration to hook SourceSets
-        val scanner = RepositoryScanner(rootDir)
-        val repo = scanner.scan()
-        val metadataCollector = MetadataCollector()
-        val dependencyResolver = DependencyResolver(metadataCollector)
-        val resolvedDeps = dependencyResolver.resolve(repo)
-        
-        val sourceSetGenerator = SourceSetGenerator()
-        sourceSetGenerator.generate(project, repo, resolvedDeps)
-        
         project.tasks.register("generateMegaApp") {
             group = "mega-app"
             description = "Scans repository and automatically generates SourceRegistry, SourceSets, etc."
 
             doLast {
+                val scanner = RepositoryScanner(rootDir)
+                val repo = scanner.scan()
                 println("MegaPlugin: Found ${repo.extensions.size} extensions, ${repo.multisrcThemes.size} multisrc themes, and ${repo.libs.size} libraries.")
+                
+                val metadataCollector = MetadataCollector()
+                val dependencyResolver = DependencyResolver(metadataCollector)
+                val resolvedDeps = dependencyResolver.resolve(repo)
+                
                 println("MegaPlugin: Resolved ${resolvedDeps.libs.size} required shared libraries.")
                 resolvedDeps.libs.forEach { lib ->
                     println("  - Required library: ${lib.name}")
                 }
+                
+                val sourceSetGenerator = SourceSetGenerator()
+                sourceSetGenerator.generate(project, repo, resolvedDeps)
+                
+                val registryGenerator = SourceRegistryGenerator()
+                registryGenerator.generate(project, repo)
             }
         }
     }

@@ -2,36 +2,22 @@ package eu.kanade.tachiyomi.megaplugin
 
 import java.io.File
 
+data class ExtensionMetadata(
+    val pkg: String,
+    val className: String,
+    val isAbstract: Boolean,
+    val name: String,
+    val lang: String,
+    val baseUrl: String,
+    val isMultisrc: Boolean = false,
+    val themeClass: String = ""
+)
+
 class MetadataCollector {
     
-    fun parseSourceClass(file: File): String? {
-        val tokens = tokenize(file.readText())
-        var currentPackage = ""
-        var hasSourceAnnotation = false
-        
-        var i = 0
-        while (i < tokens.size) {
-            val token = tokens[i]
-            if (token == "package" && i + 1 < tokens.size) {
-                currentPackage = tokens[i + 1]
-            } else if (token == "@Source") {
-                hasSourceAnnotation = true
-            } else if (token == "class" && hasSourceAnnotation && i + 1 < tokens.size) {
-                return if (currentPackage.isNotEmpty()) {
-                    "$currentPackage.${tokens[i + 1]}"
-                } else {
-                    tokens[i + 1]
-                }
-            }
-            i++
-        }
-        return null
-    }
-
     fun parseImports(file: File): List<String> {
         val tokens = tokenize(file.readText())
         val imports = mutableListOf<String>()
-        
         var i = 0
         while (i < tokens.size) {
             if (tokens[i] == "import" && i + 1 < tokens.size) {
@@ -57,11 +43,14 @@ class MetadataCollector {
                 }
                 text[i] == '"' -> {
                     i++
+                    var str = ""
                     while (i < text.length && text[i] != '"') {
                         if (text[i] == '\\') i++
+                        str += text[i]
                         i++
                     }
                     i++
+                    tokens.add("\"\$str\"")
                 }
                 text[i].isLetterOrDigit() || text[i] == '.' || text[i] == '@' || text[i] == '_' || text[i] == '*' -> {
                     val start = i
@@ -69,6 +58,10 @@ class MetadataCollector {
                         i++
                     }
                     tokens.add(text.substring(start, i))
+                }
+                text[i] == '=' || text[i] == '{' || text[i] == '}' -> {
+                    tokens.add(text[i].toString())
+                    i++
                 }
                 else -> i++
             }
