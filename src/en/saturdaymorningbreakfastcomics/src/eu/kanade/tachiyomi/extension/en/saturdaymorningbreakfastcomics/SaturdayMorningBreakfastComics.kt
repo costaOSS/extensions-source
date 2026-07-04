@@ -36,9 +36,9 @@ abstract class SaturdayMorningBreakfastComics : HttpSource() {
             val url = request.url
             if (url.host != "thumbnail") return@addInterceptor chain.proceed(request)
 
-            val image = this::class.java
-                .getResourceAsStream("/assets/thumbnail.png")!!
-                .readBytes()
+            val imageStream = this::class.java.getResourceAsStream("/assets/en_saturdaymorningbreakfastcomics/thumbnail.png")
+                ?: this::class.java.getResourceAsStream("/assets/thumbnail.png")!!
+            val image = imageStream.readBytes()
             val responseBody = image.toResponseBody("image/png".toMediaType())
             Response.Builder()
                 .request(request)

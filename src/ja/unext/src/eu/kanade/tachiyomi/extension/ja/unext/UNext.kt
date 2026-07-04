@@ -256,10 +256,9 @@ abstract class UNext :
             webView.webViewClient = object : WebViewClient() {
                 override fun onPageFinished(view: WebView, url: String?) {
                     Handler(Looper.getMainLooper()).postDelayed({
-                        val script = UNext::class.java
-                            .getResourceAsStream("/assets/key-extractor.js")!!
-                            .bufferedReader()
-                            .use { it.readText() }
+                        val scriptStream = UNext::class.java.getResourceAsStream("/assets/ja_unext/key-extractor.js")
+                            ?: UNext::class.java.getResourceAsStream("/assets/key-extractor.js")!!
+                        val script = scriptStream.bufferedReader().use { it.readText() }
 
                         view.evaluateJavascript(script, null)
                     }, 3000)

@@ -150,9 +150,9 @@ class Dynasty :
     }
 
     override fun getFilterList(): FilterList {
-        val tags = this::class.java
-            .getResourceAsStream("/assets/tags.json")!!
-            .bufferedReader().use { it.readText() }
+        val tagsStream = this::class.java.getResourceAsStream("/assets/en_dynasty/tags.json")
+            ?: this::class.java.getResourceAsStream("/assets/tags.json")!!
+        val tags = tagsStream.bufferedReader().use { it.readText() }
             .parseAs<List<Tag>>()
 
         return FilterList(
@@ -646,9 +646,9 @@ class Dynasty :
         }
 
     private val covers: Map<String, Map<String, String>> by lazy {
-        this::class.java
-            .getResourceAsStream("/assets/covers.json")!!
-            .bufferedReader().use { it.readText() }
+        val coversStream = this::class.java.getResourceAsStream("/assets/en_dynasty/covers.json")
+            ?: this::class.java.getResourceAsStream("/assets/covers.json")!!
+        coversStream.bufferedReader().use { it.readText() }
             .parseAs()
     }
 

@@ -117,9 +117,12 @@ class ComposedImageInterceptor(
      * }</pre>
      */
     private fun loadFont(fontName: String): Typeface? = try {
-        this::class.java.classLoader!!
-            .getResourceAsStream("assets/fonts/$fontName")
-            .toTypeface(fontName)
+        val classLoader = this::class.java.classLoader!!
+        val namespacedPath = "assets/all_manhuarm/fonts/$fontName"
+        val stream = classLoader.getResourceAsStream(namespacedPath)
+            ?: classLoader.getResourceAsStream("assets/fonts/$fontName")
+            ?: throw java.io.FileNotFoundException("Font not found")
+        stream.toTypeface(fontName)
     } catch (_: Exception) {
         null
     }

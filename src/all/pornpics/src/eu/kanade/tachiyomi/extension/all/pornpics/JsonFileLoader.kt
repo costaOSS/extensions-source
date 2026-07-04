@@ -12,7 +12,9 @@ object JsonFileLoader {
     val classLoader = this::class.java.classLoader!!
 
     inline fun <reified T> loadJsonAs(fileName: String): T {
-        val fileContent = classLoader.getResourceAsStream(fileName)
+        val namespacedName = "assets/all_pornpics/" + fileName.substringAfter("assets/")
+        val fileContent = classLoader.getResourceAsStream(namespacedName)
+            ?: classLoader.getResourceAsStream(fileName)
             ?: throw FileNotFoundException("Cannot find JSON file: $fileName")
 
         try {
