@@ -158,8 +158,8 @@ class PluginExtension : Plugin<Project> {
                 variant.sources.manifests.addStaticManifestFile("AndroidManifest.xml")
                 variant.sources.manifests.addGeneratedManifestFile(manifestTask) { it.outputFile }
 
-                variant.buildConfigFields.put("VERSION_CODE", versionCodeProvider.map { com.android.build.api.variant.BuildConfigField("int", it.toString(), "Version Code") })
-                variant.buildConfigFields.put("VERSION_NAME", versionNameProvider.map { com.android.build.api.variant.BuildConfigField("String", "\"$it\"", "Version Name") })
+                variant.buildConfigFields?.put("VERSION_CODE", versionCodeProvider.map { com.android.build.api.variant.BuildConfigField("int", it.toString(), "Version Code") })
+                variant.buildConfigFields?.put("VERSION_NAME", versionNameProvider.map { com.android.build.api.variant.BuildConfigField("String", "\"$it\"", "Version Name") })
             }
         }
 
