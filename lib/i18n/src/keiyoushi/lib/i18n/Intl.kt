@@ -76,7 +76,36 @@ class Intl(
      */
     private fun createBundle(lang: String): PropertyResourceBundle {
         val fileName = createMessageFileName(lang)
-        val fileContent = classLoader.getResourceAsStream(fileName)
+
+        val callerClassName = Throwable().stackTrace.firstOrNull { 
+            val cn = it.className
+            !cn.startsWith("keiyoushi.lib.i18n.Intl") && 
+            !cn.startsWith("java.lang") && 
+            !cn.startsWith("kotlin.")
+        }?.className
+
+        val namespace = if (callerClassName != null) {
+            val parts = callerClassName.split(".")
+            if (parts.size >= 6 && parts[3] == "extension") {
+                "${parts[4]}_${parts[5]}" // e.g. all_comikey
+            } else if (parts.size >= 5 && parts[3] == "multisrc") {
+                "multisrc_${parts[4]}" // e.g. multisrc_madara
+            } else {
+                null
+            }
+        } else {
+            null
+        }
+
+        val namespacedName = if (namespace != null) {
+            "assets/$namespace/" + fileName.substringAfter("assets/")
+        } else {
+            fileName
+        }
+
+        val fileContent = classLoader.getResourceAsStream(namespacedName)
+            ?: classLoader.getResourceAsStream(fileName)
+            ?: throw java.io.FileNotFoundException("Resource not found: $namespacedName or $fileName")
 
         return PropertyResourceBundle(InputStreamReader(fileContent, "UTF-8"))
     }
