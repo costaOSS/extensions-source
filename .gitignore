@@ -12,3 +12,9 @@ gen
 generated-src/
 .kotlin
 *.jks
+
+# MegaApp generated files (rebuilt by ./gradlew generateMegaApp)
+mega-app/mega-sources-list.txt
+mega-app/mega-sources.gradle
+mega-app/mega-sources.gradle.kts
+mega-app/src/main/java/eu/kanade/tachiyomi/mega/generated/
