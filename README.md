@@ -109,6 +109,14 @@ Some extensions cannot compile in the flat mega build and are listed in [`mega-a
 | `fr/lesporoiniens` | kotlinx.serialization incompatibility |
 | `ja/ciaoplus` | `Bitmap.Config?` nullable type mismatch |
 | `en/vizshonenjump` | Requires `com.drewnoakes:metadata-extractor` JitPack dep |
+| `all/leagueoflegends` | Dynamic multi-locale source config (Groovy variable refs) |
+| `all/manta` | Dynamic multi-locale source config (Groovy variable refs) |
+| `all/niadd` | Dynamic multi-locale source config (Groovy variable refs) |
+| `all/novelcool` | Dynamic multi-locale source config (Groovy variable refs) |
+| `all/tappytoon` | Dynamic multi-locale source config (Groovy variable refs) |
+| `all/izneo` | Dynamic multi-locale source config (Groovy variable refs) |
+| `all/dragonballmultiverse` | Dynamic multi-locale source config (Groovy variable refs) |
+| `all/comicfury` | Dynamic multi-locale source config (Groovy variable refs) |
 
 To exclude additional extensions, add their path (relative to project root) to `mega-app/mega-excluded-sources.txt`.
 

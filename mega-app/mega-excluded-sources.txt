@@ -40,3 +40,14 @@ src/all/e621
 
 # mangadex: uses BuildConfig (per-extension build-time generated class)
 src/all/mangadex
+
+# Multi-locale extensions: use dynamic Groovy variable references in build.gradle.kts
+# that cannot be resolved by the simplified mega-app generator
+src/all/leagueoflegends
+src/all/manta
+src/all/niadd
+src/all/novelcool
+src/all/tappytoon
+src/all/izneo
+src/all/dragonballmultiverse
+src/all/comicfury
